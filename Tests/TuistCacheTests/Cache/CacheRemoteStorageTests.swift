@@ -384,4 +384,29 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
             XCTFail("Could not unwrap the file uploader input tuple")
         }
     }
+    
+    func test_store_whenClientReturnsAnErrorTODO() throws {
+        // Given
+        typealias ResponseType = CloudResponse<CloudCacheResponse>
+        typealias ErrorType = CloudResponseError
+        let expectedError = CloudResponseError.test()
+        let config = Cloud.test()
+        cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForError(error: expectedError)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+
+        // When
+        let result = subject.store(hash: "acho tio", paths: [.root])
+            .toBlocking()
+            .materialize()
+
+        // Then
+        switch result {
+        case .completed:
+            XCTFail("Expected result to complete with error, but result was successful.")
+        case let .failed(_, error) where error is CloudResponseError:
+            XCTAssertEqual(error as! CloudResponseError, expectedError)
+        default:
+            XCTFail("Expected result to complete with error, but result error wasn't the expected type.")
+        }
+    }
 }

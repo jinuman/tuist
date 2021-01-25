@@ -30,25 +30,30 @@ public final class CacheRemoteStorage: CacheStoring {
     private let cloudClient: CloudClienting
     private let fileClient: FileClienting
     private let fileArchiverFactory: FileArchivingFactorying
-
+    private let fileArchiverFactory: FileArchivingFactorying
+    private let cloudCacheResponseFactory: CloudCacheResponseManufacturing
+    
     // MARK: - Init
 
     public convenience init(cloudConfig: Cloud, cloudClient: CloudClienting) {
         self.init(cloudConfig: cloudConfig,
                   cloudClient: cloudClient,
                   fileArchiverFactory: FileArchivingFactory(),
-                  fileClient: FileClient())
+                  fileClient: FileClient(),
+                  cloudCacheResponseFactory: CloudCacheResponseFactory())
     }
 
     init(cloudConfig: Cloud,
          cloudClient: CloudClienting,
          fileArchiverFactory: FileArchivingFactorying,
-         fileClient: FileClienting)
+         fileClient: FileClienting,
+         cloudCacheResponseFactory: CloudCacheResponseManufacturing)
     {
         self.cloudConfig = cloudConfig
         self.cloudClient = cloudClient
         self.fileArchiverFactory = fileArchiverFactory
         self.fileClient = fileClient
+        self.cloudCacheResponseFactory = cloudCacheResponseFactory
     }
 
     // MARK: - CacheStoring
@@ -75,7 +80,7 @@ public final class CacheRemoteStorage: CacheStoring {
 
     public func fetch(hash: String) -> Single<AbsolutePath> {
         do {
-            let resource = try CloudCacheResponse.fetchResource(hash: hash, cloud: cloudConfig)
+            let resource = try cloudCacheResponseFactory.fetchResource(hash: hash, cloud: cloudConfig)
             return cloudClient
                 .request(resource)
                 .map(\.object.data.url)
@@ -101,13 +106,13 @@ public final class CacheRemoteStorage: CacheStoring {
             let archiver = try fileArchiverFactory.makeFileArchiver(for: paths)
             let destinationZipPath = try archiver.zip(name: hash)
             let contentMD5 = try FileHandler.shared.base64MD5(path: destinationZipPath)
-            let storeResource = try CloudCacheResponse.storeResource(
+            let storeResource = try cloudCacheResponseFactory.storeResource(
                 hash: hash,
                 cloud: cloudConfig,
                 contentMD5: contentMD5
             )
 
-            let verifyUploadResource = try CloudCacheResponse.verifyUploadResource(
+            let verifyUploadResource = try cloudCacheResponseFactory.verifyUploadResource(
                 hash: hash,
                 cloud: cloudConfig,
                 contentMD5: contentMD5
