@@ -60,7 +60,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         typealias ErrorType = CloudHEADResponseError
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForError(error: CloudHEADResponseError())
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient, cloudCacheResponseFactory: CloudCacheResourceManufacturing)
 
         // When
         let result = subject.exists(hash: "acho tio")
@@ -86,7 +86,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let httpResponse: HTTPURLResponse = .test(statusCode: 500)
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: CloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = try subject.exists(hash: "acho tio")
@@ -105,7 +105,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let httpResponse: HTTPURLResponse = .test()
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: cloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = try subject.exists(hash: "acho tio")
@@ -125,7 +125,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let httpResponse: HTTPURLResponse = .test(statusCode: 202)
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: CloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = try subject.exists(hash: "acho tio")
@@ -145,7 +145,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let expectedError: ErrorType = .test()
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForError(error: expectedError)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = subject.fetch(hash: "acho tio")
@@ -172,7 +172,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let cacheResponse = CloudCacheResponse(url: .test(), expiresAt: 123)
         let cloudResponse = CloudResponse<CloudCacheResponse>(status: "shaki", data: cacheResponse)
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: cloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         let hash = "foobar"
         let paths = try createFolders(["Unarchived/\(hash)/IncorrectRootFolderAfterUnzipping"])
@@ -204,7 +204,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let config = Cloud.test()
         let cloudResponse = CloudResponse<CloudCacheResponse>(status: "success", data: cacheResponse)
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: cloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         let hash = "bar_foo"
         let paths = try createFolders(["Unarchived/\(hash)/myFramework.xcframework"])
@@ -231,7 +231,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let cacheResponse = CloudCacheResponse(url: url, expiresAt: 123)
         let cloudResponse = CloudResponse<CloudCacheResponse>(status: "shaki", data: cacheResponse)
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: cloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         let hash = "foo_bar"
         let paths = try createFolders(["Unarchived/\(hash)/myFramework.xcframework"])
@@ -256,7 +256,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let cloudResponse = CloudResponse<CloudCacheResponse>(status: "shaki", data: cacheResponse)
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForSuccess(object: cloudResponse, response: httpResponse)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         let paths = try createFolders(["Unarchived/\(hash)/Framework.framework"])
         fileUnarchiver.stubbedUnzipResult = paths.first?.parentDirectory
@@ -281,7 +281,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let expectedError = CloudResponseError.test()
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForError(error: expectedError)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = subject.store(hash: "acho tio", paths: [.root])
@@ -312,7 +312,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
             object: cloudResponse,
             response: .test()
         )
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         _ = subject.store(hash: "foo_bar", paths: [.root])
@@ -340,7 +340,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
             object: cloudResponse,
             response: .test()
         )
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         _ = subject.store(hash: hash, paths: [.root])
@@ -370,7 +370,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         )
 
         fileArchiver.stubbedZipResult = zipPath
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         _ = subject.store(hash: hash, paths: [.root])
@@ -392,7 +392,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
         let expectedError = CloudResponseError.test()
         let config = Cloud.test()
         cloudClient = MockCloudClienting<ResponseType, ErrorType>.makeForError(error: expectedError)
-        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, fileClient: fileClient)
+        subject = CacheRemoteStorage(cloudConfig: config, cloudClient: cloudClient, fileArchiverFactory: fileArchiverFactory, cloudCacheResponseFactory: <#CloudCacheResourceManufacturing#>, fileClient: fileClient)
 
         // When
         let result = subject.store(hash: "acho tio", paths: [.root])
