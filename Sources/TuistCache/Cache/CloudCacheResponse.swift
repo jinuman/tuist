@@ -10,13 +10,12 @@ protocol CloudCacheResponseManufacturing {
 }
 
 class CloudCacheResponseFactory: CloudCacheResponseManufacturing {
-    
     private let cloudConfig: Cloud
-    
+
     init(cloudConfig: Cloud) {
         self.cloudConfig = cloudConfig
     }
-    
+
     public func fetchResource(hash: String) throws -> CloudCacheResource {
         let url = try URL.apiCacheURL(
             hash: hash,
@@ -26,8 +25,7 @@ class CloudCacheResponseFactory: CloudCacheResponseManufacturing {
         return jsonResource(for: url, httpMethod: "GET")
     }
 
-    public func storeResource(hash: String, contentMD5: String) throws -> CloudCacheResource
-    {
+    public func storeResource(hash: String, contentMD5: String) throws -> CloudCacheResource {
         let url = try URL.apiCacheURL(
             hash: hash,
             cacheURL: cloudConfig.url,
@@ -37,8 +35,7 @@ class CloudCacheResponseFactory: CloudCacheResponseManufacturing {
         return jsonResource(for: url, httpMethod: "POST")
     }
 
-    public func verifyUploadResource(hash: String, cloud: Cloud, contentMD5: String) throws -> CloudCacheResource
-    {
+    public func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudCacheResource {
         let url = try URL.apiCacheVerifyUploadURL(
             hash: hash,
             cacheURL: cloudConfig.url,

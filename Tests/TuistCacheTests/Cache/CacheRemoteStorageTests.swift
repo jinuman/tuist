@@ -384,7 +384,7 @@ final class CacheRemoteStorageTests: TuistUnitTestCase {
             XCTFail("Could not unwrap the file uploader input tuple")
         }
     }
-    
+
     func test_store_whenClientReturnsAnErrorTODO() throws {
         // Given
         typealias ResponseType = CloudResponse<CloudCacheResponse>

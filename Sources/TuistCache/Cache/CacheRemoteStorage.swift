@@ -32,7 +32,7 @@ public final class CacheRemoteStorage: CacheStoring {
     private let fileArchiverFactory: FileArchivingFactorying
     private let fileArchiverFactory: FileArchivingFactorying
     private let cloudCacheResponseFactory: CloudCacheResponseManufacturing
-    
+
     // MARK: - Init
 
     public convenience init(cloudConfig: Cloud, cloudClient: CloudClienting) {

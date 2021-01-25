@@ -9,9 +9,8 @@ public enum MockCloudClientingError: Error {
 }
 
 public final class MockCloudClienting<U, E: Error>: CloudClienting {
-    
     public init() {}
-    
+
     // MARK: Factories
 
     public static func makeForSuccess(object: U, response: HTTPURLResponse) -> MockCloudClienting<U, E> {
@@ -19,13 +18,13 @@ public final class MockCloudClienting<U, E: Error>: CloudClienting {
         mock.configureForSuccess(object: object, response: response)
         return mock
     }
-    
+
     public static func makeForError(error: E) -> MockCloudClienting<U, E> {
         let mock = MockCloudClienting<U, E>()
         mock.configureForError(error: error)
         return mock
     }
-    
+
     public static func makeForMultipleCases(
         responsePerURL: [URL: HTTPURLResponse],
         objectPerURL: [URL: U],
@@ -39,34 +38,34 @@ public final class MockCloudClienting<U, E: Error>: CloudClienting {
         )
         return mock
     }
-    
+
     public var invokedRequest = false
     public var invokedRequestCount = 0
     public var invokedRequestParameter: HTTPResource<U, E>?
     public var invokedRequestParameterList = [HTTPResource<U, E>]()
-    
+
     private var stubbedResponse: HTTPURLResponse?
     private var stubbedObject: U?
     private var stubbedError: Error?
-    
+
     public var stubbedResponsePerURL: [URL: HTTPURLResponse] = [:]
     public var stubbedObjectPerURL: [URL: U] = [:]
     public var stubbedErrorPerURL: [URL: Error] = [:]
 
     // MARK: Configurations
-    
+
     public func configureForError(error: Error) {
         stubbedError = error
         stubbedObject = nil
         stubbedResponse = nil
     }
-    
+
     public func configureForSuccess(object: U, response: HTTPURLResponse) {
         stubbedError = nil
         stubbedObject = object
         stubbedResponse = response
     }
-    
+
     public func configureForMultipleCases(
         responsePerURL: [URL: HTTPURLResponse],
         objectPerURL: [URL: U],
@@ -79,15 +78,15 @@ public final class MockCloudClienting<U, E: Error>: CloudClienting {
         stubbedObjectPerURL = objectPerURL
         stubbedErrorPerURL = errorPerURL
     }
-    
+
     // MARK: Public Interface
-    
+
     public func request<T, Err>(_ resource: HTTPResource<T, Err>) -> Single<(object: T, response: HTTPURLResponse)> {
         invokedRequest = true
         invokedRequestCount += 1
         invokedRequestParameter = resource as? HTTPResource<U, E>
         invokedRequestParameterList.append(invokedRequestParameter!)
-        
+
         // Apply potential stubs for the received URL
         if let url = resource.request().url {
             let errorCandidate = stubbedErrorPerURL[url] ?? stubbedError

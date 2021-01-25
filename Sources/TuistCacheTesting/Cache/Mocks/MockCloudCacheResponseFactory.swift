@@ -1,10 +1,9 @@
 import Foundation
 import TuistCache
 
-class MockCloudCacheResponseFactory : CloudCacheResponseManufacturing {
-    
+public class MockCloudCacheResponseFactory: CloudCacheResponseManufacturing {
     public init() {}
-    
+
     public var invokedFetchResource = false
     public var invokedFetchResourceCount = 0
     public var invokedFetchResourceParameters: (hash: String, cloud: Cloud)?
