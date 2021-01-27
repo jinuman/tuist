@@ -19,6 +19,11 @@ struct TestCommand: ParsableCommand {
         help: "When passed, it cleans the project before testing it."
     )
     var clean: Bool = false
+    
+    @Flag(
+        help: "When passed, warnings will be silenced."
+    )
+    var quiet: Bool = false
 
     @Option(
         name: .shortAndLong,
@@ -59,7 +64,8 @@ struct TestCommand: ParsableCommand {
             configuration: configuration,
             path: absolutePath,
             deviceName: device,
-            osVersion: os
+            osVersion: os,
+            quiet: quiet
         )
     }
 }

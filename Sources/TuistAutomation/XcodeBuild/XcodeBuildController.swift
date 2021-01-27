@@ -60,6 +60,7 @@ public final class XcodeBuildController: XcodeBuildControlling {
         _ target: XcodeBuildTarget,
         scheme: String,
         clean: Bool = false,
+        quiet: Bool = false,
         destination: XcodeBuildDestination,
         arguments: [XcodeBuildArgument]
     ) -> Observable<SystemEvent<XcodeBuildOutput>> {
@@ -87,7 +88,9 @@ public final class XcodeBuildController: XcodeBuildControlling {
             break
         }
 
-        return run(command: command, isVerbose: environment.isVerbose)
+        return run(command: command,
+                   isVerbose: environment.isVerbose,
+                   quiet: quiet)
     }
 
     public func archive(_ target: XcodeBuildTarget,
@@ -198,12 +201,14 @@ public final class XcodeBuildController: XcodeBuildControlling {
             .asSingle()
     }
 
-    fileprivate func run(command: [String], isVerbose: Bool) -> Observable<SystemEvent<XcodeBuildOutput>> {
+    fileprivate func run(command: [String],
+                         isVerbose: Bool,
+                         quiet: Bool = false) -> Observable<SystemEvent<XcodeBuildOutput>> {
         if isVerbose {
             return run(command: command)
         } else {
             // swiftlint:disable:next force_try
-            return run(command: command, pipedToArguments: try! formatter.buildArguments())
+            return run(command: command, pipedToArguments: try! formatter.buildArguments(quiet: quiet))
         }
     }
 

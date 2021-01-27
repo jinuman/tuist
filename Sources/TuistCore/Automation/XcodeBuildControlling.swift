@@ -25,11 +25,14 @@ public protocol XcodeBuildControlling {
     ///   - target: The project or workspace to be built.
     ///   - scheme: The scheme of the project that should be built.
     ///   - clean: True if xcodebuild should clean the project before building.
+    ///   - quiet: True if warning should be silenced.
+    ///   - destination: The device where tests will be ran.
     ///   - arguments: Extra xcodebuild arguments.
     func test(
         _ target: XcodeBuildTarget,
         scheme: String,
         clean: Bool,
+        quiet: Bool,
         destination: XcodeBuildDestination,
         arguments: [XcodeBuildArgument]
     ) -> Observable<SystemEvent<XcodeBuildOutput>>

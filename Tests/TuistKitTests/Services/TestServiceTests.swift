@@ -143,6 +143,7 @@ private extension TestService {
         schemeName: String? = nil,
         generate _: Bool = false,
         clean: Bool = false,
+        quiet: Bool = false,
         configuration: String? = nil,
         path: AbsolutePath,
         deviceName: String? = nil,
@@ -154,7 +155,8 @@ private extension TestService {
             configuration: configuration,
             path: path,
             deviceName: deviceName,
-            osVersion: osVersion
+            osVersion: osVersion,
+            quiet: quiet
         )
     }
 }

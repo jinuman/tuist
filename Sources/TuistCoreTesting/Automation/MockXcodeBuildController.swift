@@ -24,6 +24,7 @@ final class MockXcodeBuildController: XcodeBuildControlling {
         _ target: XcodeBuildTarget,
         scheme: String,
         clean: Bool,
+        quiet: Bool,
         destination: XcodeBuildDestination,
         arguments: [XcodeBuildArgument]
     ) -> Observable<SystemEvent<XcodeBuildOutput>> {

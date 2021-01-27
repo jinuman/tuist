@@ -88,7 +88,8 @@ final class TestService {
         configuration: String?,
         path: AbsolutePath,
         deviceName: String?,
-        osVersion: String?
+        osVersion: String?,
+        quiet: Bool
     ) throws {
         logger.notice("Generating project for testing", metadata: .section)
         let graph: Graph = try generator.generateWithGraph(
@@ -134,7 +135,8 @@ final class TestService {
                 clean: clean,
                 configuration: configuration,
                 version: version,
-                deviceName: deviceName
+                deviceName: deviceName,
+                quiet: quiet
             )
         }
 
@@ -150,7 +152,8 @@ final class TestService {
         clean: Bool,
         configuration: String?,
         version: Version?,
-        deviceName: String?
+        deviceName: String?,
+        quiet: Bool
     ) throws {
         logger.log(level: .notice, "Testing scheme \(scheme.name)", metadata: .section)
         guard let buildableTarget = buildGraphInspector.testableTarget(scheme: scheme, graph: graph) else {
@@ -215,5 +218,18 @@ final class TestService {
         case .macOS:
             return .mac
         }
+        
+        let workspacePath = try buildGraphInspector.workspacePath(directory: path)!
+        _ = try xcodebuildController.test(
+            .workspace(workspacePath),
+            scheme: scheme.name,
+            clean: clean,
+            quiet: quiet,
+            destination: destination,
+            arguments: buildGraphInspector.buildArguments(target: buildableTarget, configuration: configuration, skipSigning: true)
+        )
+        .printFormattedOutput()
+        .toBlocking()
+        .last()
     }
 }
