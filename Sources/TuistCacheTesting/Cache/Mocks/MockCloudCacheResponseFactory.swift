@@ -5,12 +5,15 @@ import TuistSupport
 @testable import TuistCache
 
 public class MockCloudCacheResourceFactory: CloudCacheResourceManufacturing {
-    var invokedExistsResource = false
-    var invokedExistsResourceCount = 0
-    var invokedExistsResourceParameters: (hash: String, Void)?
-    var invokedExistsResourceParametersList = [(hash: String, Void)]()
-    var stubbedExistsResourceError: Error?
-    var stubbedExistsResourceResult: HTTPResource<CloudResponse<CloudHEADResponse>, CloudHEADResponseError>!
+    
+    public init() {}
+    
+    public var invokedExistsResource = false
+    public var invokedExistsResourceCount = 0
+    public var invokedExistsResourceParameters: (hash: String, Void)?
+    public var invokedExistsResourceParametersList = [(hash: String, Void)]()
+    public var stubbedExistsResourceError: Error?
+    public var stubbedExistsResourceResult: HTTPResource<CloudResponse<CloudHEADResponse>, CloudHEADResponseError>!
 
     public func existsResource(hash: String) throws -> HTTPResource<CloudResponse<CloudHEADResponse>, CloudHEADResponseError> {
         invokedExistsResource = true
@@ -23,12 +26,12 @@ public class MockCloudCacheResourceFactory: CloudCacheResourceManufacturing {
         return stubbedExistsResourceResult
     }
 
-    var invokedFetchResource = false
-    var invokedFetchResourceCount = 0
-    var invokedFetchResourceParameters: (hash: String, Void)?
-    var invokedFetchResourceParametersList = [(hash: String, Void)]()
-    var stubbedFetchResourceError: Error?
-    var stubbedFetchResourceResult: CloudCacheResource!
+    public var invokedFetchResource = false
+    public var invokedFetchResourceCount = 0
+    public var invokedFetchResourceParameters: (hash: String, Void)?
+    public var invokedFetchResourceParametersList = [(hash: String, Void)]()
+    public var stubbedFetchResourceError: Error?
+    public var stubbedFetchResourceResult: CloudCacheResource!
 
     public func fetchResource(hash: String) throws -> CloudCacheResource {
         invokedFetchResource = true
@@ -41,12 +44,12 @@ public class MockCloudCacheResourceFactory: CloudCacheResourceManufacturing {
         return stubbedFetchResourceResult
     }
 
-    var invokedStoreResource = false
-    var invokedStoreResourceCount = 0
-    var invokedStoreResourceParameters: (hash: String, contentMD5: String)?
-    var invokedStoreResourceParametersList = [(hash: String, contentMD5: String)]()
-    var stubbedStoreResourceError: Error?
-    var stubbedStoreResourceResult: CloudCacheResource!
+    public var invokedStoreResource = false
+    public var invokedStoreResourceCount = 0
+    public var invokedStoreResourceParameters: (hash: String, contentMD5: String)?
+    public var invokedStoreResourceParametersList = [(hash: String, contentMD5: String)]()
+    public var stubbedStoreResourceError: Error?
+    public var stubbedStoreResourceResult: CloudCacheResource!
 
     public func storeResource(hash: String, contentMD5: String) throws -> CloudCacheResource {
         invokedStoreResource = true
@@ -59,14 +62,14 @@ public class MockCloudCacheResourceFactory: CloudCacheResourceManufacturing {
         return stubbedStoreResourceResult
     }
 
-    var invokedVerifyUploadResource = false
-    var invokedVerifyUploadResourceCount = 0
-    var invokedVerifyUploadResourceParameters: (hash: String, contentMD5: String)?
-    var invokedVerifyUploadResourceParametersList = [(hash: String, contentMD5: String)]()
-    var stubbedVerifyUploadResourceError: Error?
-    var stubbedVerifyUploadResourceResult: CloudCacheResource!
+    public var invokedVerifyUploadResource = false
+    public var invokedVerifyUploadResourceCount = 0
+    public var invokedVerifyUploadResourceParameters: (hash: String, contentMD5: String)?
+    public var invokedVerifyUploadResourceParametersList = [(hash: String, contentMD5: String)]()
+    public var stubbedVerifyUploadResourceError: Error?
+    public var stubbedVerifyUploadResourceResult: CloudVerifyUploadResource!
 
-    public func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudCacheResource {
+    public func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudVerifyUploadResource {
         invokedVerifyUploadResource = true
         invokedVerifyUploadResourceCount += 1
         invokedVerifyUploadResourceParameters = (hash, contentMD5)

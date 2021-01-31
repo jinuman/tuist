@@ -98,7 +98,7 @@ public final class CacheRemoteStorage: CacheStoring {
 
     public func store(hash: String, paths: [AbsolutePath]) -> Completable {
         do {
-            let archiver = try fileArchiverFactory.makeFileArchiver(for: paths)
+            let archiver = try self.fileArchiverFactory.makeFileArchiver(for: paths)
             let destinationZipPath = try archiver.zip(name: hash)
             let contentMD5 = try FileHandler.shared.base64MD5(path: destinationZipPath)
             let storeResource = try cloudCacheResponseFactory.storeResource(
@@ -106,28 +106,45 @@ public final class CacheRemoteStorage: CacheStoring {
                 contentMD5: contentMD5
             )
 
-            let verifyUploadResource = try cloudCacheResponseFactory.verifyUploadResource(
-                hash: hash,
-                contentMD5: contentMD5
-            )
-
             return cloudClient
                 .request(storeResource)
-                .map { (responseTuple) -> URL in responseTuple.object.data.url }
+                .map { (responseTuple) -> URL in  responseTuple.object.data.url }
                 .flatMapCompletable { (url: URL) in
                     let deleteCompletable = self.deleteZipArchiveCompletable(archiver: archiver)
                     return self.fileClient.upload(file: destinationZipPath, hash: hash, to: url).asCompletable()
-                        .andThen(self.cloudClient.request(verifyUploadResource).asCompletable())
-                        .andThen(deleteCompletable)
-                        .catchError { deleteCompletable.concat(.error($0)) }
+                        .andThen(self.verify(hash: hash,
+                                            contentMD5: contentMD5,
+                                            deleteCompletable: deleteCompletable))
+                        .catchError {
+                            deleteCompletable.concat(.error($0))
+                        }
                 }
         } catch {
             return Completable.error(error)
         }
     }
 
+    
     // MARK: - Private
 
+    public func verify(hash: String, contentMD5: String, deleteCompletable: Completable) -> Completable {
+        do {
+            let verifyUploadResource = try cloudCacheResponseFactory.verifyUploadResource(
+                hash: hash,
+                contentMD5: contentMD5
+            )
+
+            return cloudClient
+                .request(verifyUploadResource).asCompletable()
+                .andThen(deleteCompletable)
+                .catchError {
+                    deleteCompletable.concat(.error($0))
+                }
+        } catch {
+            return Completable.error(error)
+        }
+    }
+    
     private func frameworkPath(in archive: AbsolutePath) -> AbsolutePath? {
         if let xcframeworkPath = FileHandler.shared.glob(archive, glob: "*.xcframework").first {
             return xcframeworkPath

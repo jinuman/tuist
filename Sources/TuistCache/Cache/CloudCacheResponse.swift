@@ -4,14 +4,18 @@ import TuistGraph
 import TuistSupport
 
 typealias CloudCacheResource = HTTPResource<CloudResponse<CloudCacheResponse>, CloudResponseError>
+typealias CloudVerifyUploadResource = HTTPResource<CloudResponse<CloudVerifyUploadResponse>, CloudResponseError>
 
 struct CloudHEADResponse: Decodable {}
+struct CloudVerifyUploadResponse: Decodable {
+    let uploadedSize: Int
+}
 
 protocol CloudCacheResourceManufacturing {
     func existsResource(hash: String) throws -> HTTPResource<CloudResponse<CloudHEADResponse>, CloudHEADResponseError>
     func fetchResource(hash: String) throws -> CloudCacheResource
     func storeResource(hash: String, contentMD5: String) throws -> CloudCacheResource
-    func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudCacheResource
+    func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudVerifyUploadResource
 }
 
 class CloudCacheResourceFactory: CloudCacheResourceManufacturing {
@@ -49,7 +53,7 @@ class CloudCacheResourceFactory: CloudCacheResourceManufacturing {
         return jsonResource(for: url, httpMethod: "POST")
     }
 
-    func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudCacheResource {
+    func verifyUploadResource(hash: String, contentMD5: String) throws -> CloudVerifyUploadResource {
         let url = try URL.apiCacheVerifyUploadURL(
             hash: hash,
             cacheURL: cloudConfig.url,
@@ -59,7 +63,7 @@ class CloudCacheResourceFactory: CloudCacheResourceManufacturing {
         return jsonResource(for: url, httpMethod: "POST")
     }
 
-    private func jsonResource(for url: URL, httpMethod: String) -> CloudCacheResource {
+    private func jsonResource<R: Decodable>(for url: URL, httpMethod: String) -> HTTPResource<CloudResponse<R>, CloudResponseError> {
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod
         return .jsonResource { request }

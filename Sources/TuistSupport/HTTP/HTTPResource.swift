@@ -54,7 +54,10 @@ extension HTTPResource where T: Decodable, E: Decodable {
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase
         return HTTPResource<T, E>(
             request: request,
-            parse: { data, _ in try jsonDecoder.decode(T.self, from: data) },
+            parse: { data, _ in
+                let dataStr = String(decoding: data, as: UTF8.self)
+                return try jsonDecoder.decode(T.self, from: data)
+            },
             parseError: { data, _ in try jsonDecoder.decode(E.self, from: data) }
         )
     }
