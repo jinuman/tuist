@@ -39,6 +39,9 @@ struct GraphCommand: ParsableCommand, HasTrackableParameters {
     )
     var layoutAlgorithm: GraphViz.LayoutAlgorithm = .dot
 
+    @Argument(help: "A list of targets to filter. Those and their dependent targets will be showed in the graph.")
+    var targets: [String] = []
+
     @Option(
         name: .shortAndLong,
         help: "The path where the graph will be generated."
@@ -54,6 +57,7 @@ struct GraphCommand: ParsableCommand, HasTrackableParameters {
                                layoutAlgorithm: layoutAlgorithm,
                                skipTestTargets: skipTestTargets,
                                skipExternalDependencies: skipExternalDependencies,
+                               targetsToFilter: targets,
                                path: path)
     }
 }

@@ -24,12 +24,14 @@ final class GraphService {
              layoutAlgorithm: GraphViz.LayoutAlgorithm,
              skipTestTargets: Bool,
              skipExternalDependencies: Bool,
+             targetsToFilter: [String],
              path: String?) throws
     {
         let graphVizGraph = try graphVizGenerator.generate(at: FileHandler.shared.currentPath,
                                                            manifestLoader: manifestLoader,
                                                            skipTestTargets: skipTestTargets,
-                                                           skipExternalDependencies: skipExternalDependencies)
+                                                           skipExternalDependencies: skipExternalDependencies,
+                                                           targetsToFilter: targetsToFilter)
         let filePath = makeAbsolutePath(from: path).appending(component: "graph.\(format.rawValue)")
         if FileHandler.shared.exists(filePath) {
             logger.notice("Deleting existing graph at \(filePath.pathString)")
@@ -78,7 +80,7 @@ final class GraphService {
     }
 
     private func isGraphVizInstalled() throws -> Bool {
-        try System.shared.capture(["brew", "list"]).contains("graphviz")
+        try System.shared.capture(["brew", "list", "--formula"]).contains("graphviz")
     }
 
     private func installGraphViz() throws {
